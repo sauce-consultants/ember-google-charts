@@ -1,5 +1,8 @@
 import RSVP from 'rsvp';
 import Service from '@ember/service';
+import config from 'ember-get-config';
+
+const MAPS_API_KEY = config['ember-google-charts'] ? config['ember-google-charts'].mapsApiKey : null;
 
 export default Service.extend({
   language: 'en',
@@ -7,7 +10,7 @@ export default Service.extend({
   init() {
     this._super(...arguments);
 
-    this.googlePackages = this.googlePackages || ['corechart', 'bar', 'line', 'scatter'];
+    this.googlePackages = this.googlePackages || ['corechart', 'bar', 'line', 'scatter', 'geochart'];
     this.defaultOptions = this.defaultOptions || {
       animation: {
         duration: 500,
@@ -17,7 +20,12 @@ export default Service.extend({
   },
 
   loadPackages() {
-    const { google: { charts, visualization } } = window;
+    const {
+      google: {
+        charts,
+        visualization
+      }
+    } = window;
 
     return new RSVP.Promise((resolve, reject) => {
       if (visualization !== undefined) {
@@ -26,10 +34,13 @@ export default Service.extend({
         charts.load('current', {
           language: this.language,
           packages: this.googlePackages,
+          mapsApiKey: MAPS_API_KEY,
         });
 
         charts.setOnLoadCallback((ex) => {
-          if (ex) { reject(ex); }
+          if (ex) {
+            reject(ex);
+          }
 
           resolve();
         });
