@@ -31,8 +31,7 @@ export default Service.extend({
       if (visualization !== undefined) {
         resolve();
       } else {
-        charts.load('current', {
-          language: this.language,
+        google.charts.load('current', {
           packages: this.googlePackages,
           mapsApiKey: MAPS_API_KEY,
         });
